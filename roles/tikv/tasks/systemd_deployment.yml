@@ -6,5 +6,5 @@
   with_items: "{{ instances[inventory_hostname] }}"
   vars:
     this_role_name: tikv
-    service_name: "tikv-{{ item[tikv_port] | defalut(tikv_port) }}"
-    deploy_dir: "{{ item[deploy_dir] | defalut(deploy_dir) }}"
+    service_name: "tikv-{{ item[tikv_port] | default(tikv_port) }}"
+    deploy_dir: "{{ item[deploy_dir] | default(deploy_dir) }}"
