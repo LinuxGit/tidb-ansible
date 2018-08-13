@@ -8,8 +8,6 @@ cd "{{ deploy_dir }}" || exit 1
 
 {% set my_ip = hostvars[inventory_hostname].ansible_host | default(hostvars[inventory_hostname].inventory_hostname) -%}
 
-{% set my_peer_id = groups.tikv_servers.index(inventory_hostname) + 1 -%}
-
 {% set all_pd = [] -%}
 {% set pd_hosts = groups.pd_servers %}
 {% for host in pd_hosts -%}

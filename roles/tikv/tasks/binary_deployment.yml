@@ -1,8 +1,9 @@
 ---
 
 - name: deploy binary
-  copy: src="{{ resources_dir }}/bin/tikv-server" dest="{{ deploy_dir }}/bin/" mode=0755 backup=yes
+  copy: src="{{ resources_dir }}/bin/tikv-server" dest="{{ item[deploy_dir] | defalut(deploy_dir) }}/bin/" mode=0755 backup=yes
   register: tikv_binary
+  with_items: "{{ instances[inventory_hostname] }}"
 
 - name: backup bianry file
   command: mv "{{ tikv_binary.backup_file }}" "{{ backup_dir }}"
@@ -10,14 +11,15 @@
 
 - name: create run script
   template:
-    src: "{{ item }}_{{ role_name }}_binary.sh.j2"
-    dest: "{{ deploy_dir }}/scripts/{{ item }}_{{ role_name }}.sh"
+    src: "run_{{ role_name }}_binary.sh.j2"
+    dest: "{{ item[deploy_dir] | defalut(deploy_dir) }}/scripts/run_{{ role_name }}.sh"
     mode: "0755"
     backup: yes
-  with_items:
-    - run
+  with_items: "{{ instances[inventory_hostname] }}"
   vars:
     role_status_dir: status/{{ role_name }}
+    deploy_dir: "{{ item[deploy_dir] | defalut(deploy_dir) }}"
+    tikv_port: "{{ item[tikv_port] | defalut(tikv_port) }}"
   register: tikv_script
 
 - name: backup script file

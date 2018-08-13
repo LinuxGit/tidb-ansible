@@ -6,3 +6,28 @@ tikv_port: 20160
 tikv_data_dir: "{{ deploy_dir }}/data"
 tikv_log_dir: "{{ deploy_dir }}/log"
 tikv_cert_dir: "{{ deploy_dir }}/conf/ssl"
+
+instances:
+  172.16.10.72:
+    tikv1:
+      deploy_dir: "/data1/louis/tikv1/deploy"
+      tikv_port: 20170
+    tikv2:
+      deploy_dir: "/data1/louis/tikv2/deploy"
+      tikv_port: 20171
+
+  172.16.10.73:
+    tikv1:
+      deploy_dir: "/data1/louis/tikv1/deploy"
+      tikv_port: 20170
+    tikv2:
+      deploy_dir: "/data1/louis/tikv2/deploy"
+      tikv_port: 20171
+
+  172.16.10.74:
+    tikv1:
+      deploy_dir: "/data1/louis/tikv1/deploy"
+      tikv_port: 20170
+    tikv2:
+      deploy_dir: "/data1/louis/tikv2/deploy"
+      tikv_port: 20171

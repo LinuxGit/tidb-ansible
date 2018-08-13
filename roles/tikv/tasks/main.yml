@@ -1,14 +1,23 @@
 ---
 # tasks file for tikv
 
-- name: create deploy directories
-  file: path={{ item }} state=directory mode=0755
-  with_items:
-  - "{{ tikv_log_dir }}"
-  - "{{ tikv_data_dir }}"
-  - "{{ tikv_conf_dir }}"
+- name: create tikv deploy directory
+  file: path={{ item[deploy_dir] | defalut(deploy_dir) }} state=directory mode=0755
+  with_items: "{{ instances[inventory_hostname] }}"
 
-- include_tasks: check_filesystem.yml
+- name: create tikv log directory
+  file: path={{ item[tikv_log_dir] | defalut(item[deploy_dir] | defalut(deploy_dir)/log) }} state=directory mode=0755
+  with_items: "{{ instances[inventory_hostname] }}"
+
+- name: create tikv data directory
+  file: path={{ item[tikv_data_dir] | defalut(item[tikv_data_dir] | defalut(deploy_dir)/data) }} state=directory mode=0755
+  with_items: "{{ instances[inventory_hostname] }}"
+
+- name: create tikv conf directory
+  file: path={{ item[deploy_dir] | defalut(deploy_dir)/conf }} state=directory mode=0755
+  with_items: "{{ instances[inventory_hostname] }}"
+
+#- include_tasks: check_filesystem.yml
 
 - include_tasks: check_certs.yml
   when: enable_tls|default(false)
@@ -54,8 +63,9 @@
 - debug: var=tikv_conf
 
 - name: create config file
-  template: src=tikv.toml.j2 dest={{ deploy_dir }}/conf/tikv.toml mode=0644 backup=yes
+  template: src=tikv.toml.j2 dest={{ item[deploy_dir] | defalut(deploy_dir) }}/conf/tikv.toml mode=0644 backup=yes
   register: tikv_conf_st
+  with_items: "{{ instances[inventory_hostname] }}"
 
 - name: backup conf file
   command: mv "{{ tikv_conf_st.backup_file }}" "{{ backup_dir }}"
@@ -63,6 +73,6 @@
 
 - include_tasks: "{{ deployment_method }}_deployment.yml"
 
-- name: prepare firewalld white list
-  set_fact:
-    firewalld_ports: "{{ [tikv_port ~ '/tcp'] + firewalld_ports }}"
+# - name: prepare firewalld white list
+#   set_fact:
+#     firewalld_ports: "{{ [tikv_port ~ '/tcp'] + firewalld_ports }}"
