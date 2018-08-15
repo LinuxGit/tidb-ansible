@@ -6,15 +6,15 @@
   loop: "{{ tikv_instances[inventory_hostname]|dict2items }}"
 
 - name: create tikv log directory
-  file: path={{ item.value.tikv_log_dir | default(item.value.deploy_dir | default(deploy_dir)/log) }} state=directory mode=0755
+  file: path={{ item.value.tikv_log_dir | default(item.value.deploy_dir | default(deploy_dir)) }}/log state=directory mode=0755
   loop: "{{ tikv_instances[inventory_hostname]|dict2items }}"
 
 - name: create tikv data directory
-  file: path={{ item.value.tikv_data_dir | default(item.value.deploy_dir | default(deploy_dir)/data) }} state=directory mode=0755
+  file: path={{ item.value.tikv_data_dir | default(item.value.deploy_dir | default(deploy_dir)) }}/data state=directory mode=0755
   loop: "{{ tikv_instances[inventory_hostname]|dict2items }}"
 
 - name: create tikv conf directory
-  file: path={{ item.value.deploy_dir | default(deploy_dir)/conf }} state=directory mode=0755
+  file: path={{ item.value.deploy_dir | default(deploy_dir) }}/conf state=directory mode=0755
   loop: "{{ tikv_instances[inventory_hostname]|dict2items }}"
 
 #- include_tasks: check_filesystem.yml
