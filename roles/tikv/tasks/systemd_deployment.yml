@@ -3,8 +3,8 @@
 - name: deploy systemd
   include_role:
     name: systemd
-  with_items: "{{ instances[inventory_hostname] }}"
+  loop: "{{ tikv_instances[inventory_hostname]|dict2items }}"
   vars:
     this_role_name: tikv
-    service_name: "tikv-{{ item[tikv_port] | default(tikv_port) }}"
-    deploy_dir: "{{ item[deploy_dir] | default(deploy_dir) }}"
+    service_name: "tikv-{{ item.value.tikv_port | default(tikv_port) }}"
+    deploy_dir: "{{ item.value.deploy_dir | default(deploy_dir) }}"

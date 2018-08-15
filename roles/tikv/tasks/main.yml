@@ -2,20 +2,20 @@
 # tasks file for tikv
 
 - name: create tikv deploy directory
-  file: path={{ item[deploy_dir] | default(deploy_dir) }} state=directory mode=0755
-  with_items: "{{ instances[inventory_hostname] }}"
+  file: path={{ item.value.deploy_dir | default(deploy_dir) }} state=directory mode=0755
+  loop: "{{ tikv_instances[inventory_hostname]|dict2items }}"
 
 - name: create tikv log directory
-  file: path={{ item[tikv_log_dir] | default(item[deploy_dir] | default(deploy_dir)/log) }} state=directory mode=0755
-  with_items: "{{ instances[inventory_hostname] }}"
+  file: path={{ item.value.tikv_log_dir | default(item.value.deploy_dir | default(deploy_dir)/log) }} state=directory mode=0755
+  loop: "{{ tikv_instances[inventory_hostname]|dict2items }}"
 
 - name: create tikv data directory
-  file: path={{ item[tikv_data_dir] | default(item[tikv_data_dir] | default(deploy_dir)/data) }} state=directory mode=0755
-  with_items: "{{ instances[inventory_hostname] }}"
+  file: path={{ item.value.tikv_data_dir | default(item.value.deploy_dir | default(deploy_dir)/data) }} state=directory mode=0755
+  loop: "{{ tikv_instances[inventory_hostname]|dict2items }}"
 
 - name: create tikv conf directory
-  file: path={{ item[deploy_dir] | default(deploy_dir)/conf }} state=directory mode=0755
-  with_items: "{{ instances[inventory_hostname] }}"
+  file: path={{ item.value.deploy_dir | default(deploy_dir)/conf }} state=directory mode=0755
+  loop: "{{ tikv_instances[inventory_hostname]|dict2items }}"
 
 #- include_tasks: check_filesystem.yml
 
@@ -63,9 +63,9 @@
 - debug: var=tikv_conf
 
 - name: create config file
-  template: src=tikv.toml.j2 dest={{ item[deploy_dir] | default(deploy_dir) }}/conf/tikv.toml mode=0644 backup=yes
+  template: src=tikv.toml.j2 dest={{ item.value.deploy_dir | default(deploy_dir) }}/conf/tikv.toml mode=0644 backup=yes
   register: tikv_conf_st
-  with_items: "{{ instances[inventory_hostname] }}"
+  loop: "{{ tikv_instances[inventory_hostname]|dict2items }}"
 
 - name: backup conf file
   command: mv "{{ tikv_conf_st.backup_file }}" "{{ backup_dir }}"
