@@ -17,6 +17,10 @@
   file: path={{ item.value.deploy_dir | default(deploy_dir) }}/conf state=directory mode=0755
   loop: "{{ tikv_instances[inventory_hostname]|dict2items }}"
 
+- name: create tikv script directory
+  file: path={{ item.value.deploy_dir | default(deploy_dir) }}/scripts state=directory mode=0755
+  loop: "{{ tikv_instances[inventory_hostname]|dict2items }}"
+
 #- include_tasks: check_filesystem.yml
 
 - include_tasks: check_certs.yml
